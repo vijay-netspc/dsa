@@ -1,0 +1,44 @@
+// Online C compiler to run C program online
+#include <stdio.h>
+int size=9,rear=0,front=0,max=0;
+int enq(int *q,int x)
+{   if(rear==0||x<max)
+        {
+            q[rear]=x;
+            rear=(rear+1)%size;
+        }
+    else
+    {
+        max=x;
+        q[rear]=2*x-max;
+        rear=(rear+1)%size;
+    }
+}
+int deq(int *q)
+{
+    int x=q[front];
+    front=(front+1)%size;
+    if(x>max)
+    {   int temp=max;
+        max=2*max-x;
+        return temp;
+        
+    }
+    
+    return x;
+}
+int main() {
+    // Write C code here
+    printf("Try programiz.pro");
+    int arr[8]={1, 3, -1, -3, 5, 3, 6, 7},k=3;
+    int que[size];
+    for(int j=0;j+k<=8;j++){
+    for(int i=j;i<j+k;i++)
+        {  // printf("%d ",arr[i]);
+            enq(que,arr[i]);
+        }
+        printf("\n%d \n",max);}
+    
+
+    return 0;
+}
