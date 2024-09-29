@@ -1,0 +1,984 @@
+1)
+#include <stdio.h>
+#include <string.h>
+
+int longestValidParentheses(char *s) {
+    int maxLength = 0;
+    int n = strlen(s);
+    int stack[n + 1];
+    int top = -1;
+    
+    stack[++top] = -1; 
+
+    for (int i = 0; i < n; i++) {
+        if (s[i] == '(') {
+            stack[++top] = i;  
+        } else {
+            top--;  
+            
+            if (top == -1) {
+                stack[++top] = i;   
+            } else {
+                int length = i - stack[top];
+                if (length > maxLength) {
+                    maxLength = length;  
+                }
+            }
+        }
+    }
+
+    return maxLength;
+}
+
+int main() {
+    char s[100]; 
+    
+    printf("Enter a string containing only '(' and ')': ");
+    scanf("%s", s);
+
+    int result = longestValidParentheses(s);
+    printf("The length of the longest valid parentheses substring is: %d\n", result);
+
+    return 0;
+}
+
+
+
+
+
+2)
+
+
+minstack
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX 100
+
+int stack[MAX];
+int minStack[MAX];
+int top = -1;
+int minTop = -1;
+
+// Function to push an element onto the stack
+void push(int value) {
+    if (top == MAX - 1) {
+        printf("Stack overflow\n");
+        return;
+    }
+
+    stack[++top] = value;
+
+    if (minTop == -1 || value <= minStack[minTop]) {
+        minStack[++minTop] = value;
+    }
+}
+
+// Function to pop an element from the stack
+void pop() {
+    if (top == -1) {
+        printf("Stack underflow\n");
+        return;
+    }
+
+    int poppedValue = stack[top];  // Store the value to be popped
+
+    if (poppedValue == minStack[minTop]) {
+        --minTop;
+    }
+
+    --top;
+
+    printf("Popped value: %d\n", poppedValue);  // Print the popped value
+}
+
+// Function to get the top element of the stack
+int getTop() {
+    if (top == -1) {
+        printf("Stack is empty\n");
+        return -1;
+    }
+    return stack[top];
+}
+
+// Function to get the minimum element from the stack
+int getMin() {
+    if (minTop == -1) {
+        printf("Stack is empty\n");
+        return -1;
+    }
+    return minStack[minTop];
+}
+
+// Main function to interact with the user
+int main() {
+    int choice, value;
+
+    while (1) {
+        printf("\nStack Operations:\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Top\n");
+        printf("4. Get Min\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to push: ");
+                scanf("%d", &value);
+                push(value);
+                break;
+            case 2:
+                pop();
+                break;
+            case 3:
+                value = getTop();
+                if (value != -1) {
+                    printf("Top element: %d\n", value);
+                }
+                break;
+            case 4:
+                value = getMin();
+                if (value != -1) {
+                    printf("Minimum element: %d\n", value);
+                }
+                break;
+            case 5:
+                printf("Exiting...\n");
+                return 0;
+            default:
+                printf("Invalid choice. Please enter 1, 2, 3, 4, or 5.\n");
+                break;
+        }
+    }
+
+    return 0;
+}
+
+
+
+queue using stack
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100 // Define a fixed maximum size for the queue
+
+int stack1[MAX];
+int top1 = -1;
+
+int stack2[MAX];
+int top2 = -1;
+
+int size; // Maximum size of the queue
+
+// Function to push an element onto stack1
+void push1(int value) {
+    if (top1 < size - 1) {
+        stack1[++top1] = value;
+    } else {
+        printf("Stack1 overflow\n");
+    }
+}
+
+// Function to pop an element from stack1
+int pop1() {
+    if (top1 >= 0) {
+        return stack1[top1--];
+    } else {
+        printf("Stack1 underflow\n");
+        return -1;
+    }
+}
+
+// Function to check if stack1 is empty
+int isEmpty1() {
+    return top1 == -1;
+}
+
+// Function to push an element onto stack2
+void push2(int value) {
+    if (top2 < size - 1) {
+        stack2[++top2] = value;
+    } else {
+        printf("Stack2 overflow\n");
+    }
+}
+
+// Function to pop an element from stack2
+int pop2() {
+    if (top2 >= 0) {
+        return stack2[top2--];
+    } else {
+        printf("Stack2 underflow\n");
+        return -1;
+    }
+}
+
+// Function to check if stack2 is empty
+int isEmpty2() {
+    return top2 == -1;
+}
+
+// Enqueue operation
+void enqueue(int value) {
+    if (top1 < size - 1) {
+        push1(value);
+        printf("Enqueued: %d\n", value);
+    } else {
+        printf("Queue is full\n");
+    }
+}
+
+// Dequeue operation
+int dequeue() {
+    if (isEmpty2()) {
+        // Transfer all elements from stack1 to stack2 if stack2 is empty
+        while (!isEmpty1()) {
+            push2(pop1());
+        }
+    }
+
+    if (isEmpty2()) {
+        printf("Queue is empty\n");
+        return -1;
+    } else {
+        return pop2();
+    }
+}
+
+// Main function to interact with the user
+int main() {
+    int choice, value;
+
+    // Get the size of the queue from the user
+    printf("Enter the maximum size of the queue (<= %d): ", MAX);
+    scanf("%d", &size);
+
+    if (size > MAX) {
+        printf("Size exceeds maximum limit. Setting size to %d.\n", MAX);
+        size = MAX;
+    } else if (size <= 0) {
+        printf("Invalid size. Setting size to %d.\n", MAX);
+        size = MAX;
+    }
+
+    while (1) {
+        printf("\nQueue Operations:\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to enqueue: ");
+                scanf("%d", &value);
+                enqueue(value);
+                break;
+            case 2:
+                value = dequeue();
+                if (value != -1) {
+                    printf("Dequeued: %d\n", value);
+                }
+                break;
+            case 3:
+                printf("Exiting...\n");
+                exit(0);
+                break;
+            default:
+                printf("Invalid choice. Please enter 1, 2, or 3.\n");
+                break;
+        }
+    }
+
+    return 0;
+}
+
+
+sortstack
+
+#include <stdio.h>
+
+#define MAX_SIZE 100
+
+int stack[MAX_SIZE];
+int top = -1;
+int size;
+
+
+int isEmpty() {
+    return top == -1;
+}
+
+
+int isFull() {
+    return top == size - 1;
+}
+
+
+void push(int value) {
+    if (isFull()) {
+        printf("Stack overflow\n");
+        return;
+    }
+    stack[++top] = value;
+    printf("%d pushed to stack\n", value);
+}
+
+
+int pop() {
+    if (isEmpty()) {
+        printf("Stack underflow\n");
+        return -1; 
+    }
+    return stack[top--];
+}
+
+int peek() {
+    if (isEmpty()) {
+        printf("Stack is empty\n");
+        return -1; 
+    }
+    return stack[top];
+}
+
+
+void sortedInsert(int element) {
+    if (isEmpty() || peek() <= element) {
+        push(element);
+        return;
+    }
+
+    int temp = pop();
+    sortedInsert(element);
+    push(temp);
+}
+
+
+void sortStack() {
+    if (!isEmpty()) {
+        int temp = pop();
+        sortStack();
+        sortedInsert(temp);
+    }
+}
+
+
+void printStack() {
+    if (isEmpty()) {
+        printf("Stack is empty\n");
+        return;
+    }
+    printf("Stack contents:\n");
+    for (int i = top; i >= 0; i--) {
+        printf("%d ", stack[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int choice, value;
+
+    printf("Enter the size of the stack (max %d): ", MAX_SIZE);
+    scanf("%d", &size);
+
+    if (size > MAX_SIZE) {
+        printf("Size exceeds maximum allowed size of %d\n", MAX_SIZE);
+        return 1;
+    }
+
+    top = -1; 
+
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Push an element\n");
+        printf("2. Pop an element\n");
+        printf("3. Sort the stack\n");
+        printf("4. Print the stack\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                if (isFull()) {
+                    printf("Stack is full, cannot push more elements.\n");
+                } else {
+                    printf("Enter the value to push: ");
+                    scanf("%d", &value);
+                    push(value);
+                }
+                break;
+
+            case 2:
+                value = pop();
+                if (value != -1) { 
+                    printf("%d popped from stack\n", value);
+                }
+                break;
+
+            case 3:
+                sortStack();
+                printf("Stack sorted.\n");
+                printStack(); 
+                break;
+
+            case 4:
+                printStack();
+                break;
+
+            case 5:
+                printf("Exiting...\n");
+                return 0;
+
+            default:
+                printf("Invalid choice. Please try again.\n");
+                break;
+        }
+    }
+
+    return 0;
+}
+
+
+binary
+
+
+#include <stdio.h>
+#include <string.h>
+
+
+
+
+void generateBinaryNumbers(int N) {
+    if (N <= 0) {
+        printf("The number of binary numbers must be positive.\n");
+        return;
+    }
+
+    char queue[100][32]; 
+    int front = 0; 
+    int rear = 0; 
+    
+    strcpy(queue[rear++], "1");
+
+    for (int count = 0; count < N; count++) {
+    
+        char current[100];
+        strcpy(current, queue[front++]);
+
+        
+        printf("%s\n", current);
+
+       
+        if (rear < N) {
+            strcpy(queue[rear], current);
+            strcat(queue[rear++], "0");
+
+            if (rear < N) {
+                strcpy(queue[rear], current);
+                strcat(queue[rear++], "1");
+            }
+        }
+    }
+}
+
+int main() {
+    int N;
+
+    
+    printf("Enter the number of binary numbers to generate: ");
+    scanf("%d", &N);
+
+    
+    generateBinaryNumbers(N);
+
+    return 0;
+}
+
+
+roundrobin
+
+
+#include <stdio.h>
+
+
+void findWaitingTime(int processes[], int n, int burstTime[], int waitingTime[], int quantum) {
+    int remainingBurstTime[n];
+    for (int i = 0; i < n; i++) {
+        remainingBurstTime[i] = burstTime[i];  
+    }
+
+    int time = 0; 
+
+   
+    while (1) {
+        int done = 1; 
+
+        for (int i = 0; i < n; i++) {
+          
+            if (remainingBurstTime[i] > 0) {
+                done = 0; 
+
+                if (remainingBurstTime[i] > quantum) {
+                    
+                    time += quantum;
+                    remainingBurstTime[i] -= quantum;
+                } else {
+                    
+                    time += remainingBurstTime[i];
+                    waitingTime[i] = time - burstTime[i]; // 
+                    remainingBurstTime[i] = 0; 
+                }
+            }
+        }
+
+        
+        if (done == 1)
+            break;
+    }
+}
+
+void findTurnAroundTime(int processes[], int n, int burstTime[], int waitingTime[], int turnAroundTime[]) {
+    for (int i = 0; i < n; i++) {
+        turnAroundTime[i] = burstTime[i] + waitingTime[i]; 
+    }
+}
+
+void findAvgTime(int processes[], int n, int burstTime[], int quantum) {
+    int waitingTime[n], turnAroundTime[n], total_wt = 0, total_tat = 0;
+
+    findWaitingTime(processes, n, burstTime, waitingTime, quantum);
+
+ 
+    findTurnAroundTime(processes, n, burstTime, waitingTime, turnAroundTime);
+
+    printf("Processes\tBurst Time\tWaiting Time\tTurnaround Time\n");
+
+    for (int i = 0; i < n; i++) {
+        total_wt += waitingTime[i];
+        total_tat += turnAroundTime[i];
+        printf("P%d\t\t%d\t\t%d\t\t%d\n", processes[i], burstTime[i], waitingTime[i], turnAroundTime[i]);
+    }
+
+    printf("Average waiting time = %.2f\n", (float)total_wt / n);
+    printf("Average turnaround time = %.2f\n", (float)total_tat / n);
+}
+
+int main() {
+    int n, quantum;
+
+   
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    int processes[n], burstTime[n];
+
+    printf("Enter burst times of the processes:\n");
+    for (int i = 0; i < n; i++) {
+        printf("Process P%d: ", i + 1);
+        processes[i] = i + 1;
+        scanf("%d", &burstTime[i]);
+    }
+
+    printf("Enter the time quantum: ");
+    scanf("%d", &quantum);
+
+    findAvgTime(processes, n, burstTime, quantum);
+
+    return 0;
+}
+
+
+
+
+fcfs
+
+#include<stdio.h>
+int main()
+{
+int n,burst[100],wt[100],tat[100],tot_wt,tot_tat;
+printf("Enter the number of processes:");
+scanf("%d",&n);
+for(int i=0;i<n;i++)
+{
+printf("Enter the burst time:");
+scanf("%d",&burst[i]);
+}
+wt[0]=0;
+for(int i=1;i<n;i++)
+{
+wt[i]=burst[i-1]+wt[i-1];
+}
+for(int i=0;i<n;i++)
+{
+tat[i]=burst[i]+wt[i];
+}
+for(int i=0;i<n;i++)
+{
+tot_wt+=wt[i];
+tot_tat+=tat[i];
+}
+float avg_wt=(float)tot_wt/(float)n;
+float avg_tat=(float)tot_tat/(float)n;
+printf("\n PI\tBT\tWT\tTAT\n");
+for(int i=0;i<n;i++)
+{
+printf("%d\t%d\t%d\t%d\n",i+1,burst[i],wt[i],tat[i]);
+ }
+printf("\nAverage waiting time=%.2f",avg_wt);
+printf("\nAverage turn around time=%.2f",avg_tat);
+}
+
+
+sliding 
+
+#include <stdio.h>
+
+#define MAX_SIZE 1000
+
+void maxSlidingWindow(int nums[], int numsSize, int k, int result[], int *returnSize) {
+    if (numsSize == 0 || k == 0) {
+        *returnSize = 0;
+        return;
+    }
+
+    int queue[MAX_SIZE];
+    int front = 0, rear = 0;
+
+    for (int i = 0; i < k; i++) {
+        while (rear > front && nums[i] >= nums[queue[rear - 1]]) {
+            rear--;
+        }
+        queue[rear++] = i;
+    }
+
+    result[0] = nums[queue[front]];
+
+    for (int i = k; i < numsSize; i++) {
+        while (front < rear && queue[front] <= i - k) {
+            front++;
+        }
+
+        while (rear > front && nums[i] >= nums[queue[rear - 1]]) {
+            rear--;
+        }
+        queue[rear++] = i;
+
+        result[i - k + 1] = nums[queue[front]];
+    }
+
+    *returnSize = numsSize - k + 1;
+}
+
+int main() {
+    int nums[MAX_SIZE];
+    int result[MAX_SIZE];
+    int numsSize, k;
+    int returnSize;
+
+    printf("Enter the number of elements in the array (max %d): ", MAX_SIZE);
+    scanf("%d", &numsSize);
+
+    if (numsSize > MAX_SIZE) {
+        printf("Error: Number of elements exceeds the maximum allowed size.\n");
+        return 1;
+    }
+
+    printf("Enter the elements of the array:\n");
+    for (int i = 0; i < numsSize; i++) {
+        scanf("%d", &nums[i]);
+    }
+
+    printf("Enter the size of the sliding window (k): ");
+    scanf("%d", &k);
+
+    if (k > numsSize || k <= 0) {
+        printf("Error: Invalid window size.\n");
+        return 1;
+    }
+
+    maxSlidingWindow(nums, numsSize, k, result, &returnSize);
+
+    printf("Max sliding window: ");
+    for (int i = 0; i < returnSize; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+
+
+
+Reverse k elements
+
+
+#include <stdio.h>
+
+#define MAX_QUEUE_SIZE 1000 
+int queue[MAX_QUEUE_SIZE];
+int front = 0;
+int rear = -1;
+int size = 0;
+int maxSize;
+
+
+int isEmpty() {
+    return size == 0;
+}
+
+
+int isFull() {
+    return size == maxSize;
+}
+
+void enqueue(int value) {
+    if (isFull()) {
+        printf("Queue is full\n");
+        return;
+    }
+    rear = (rear + 1) % maxSize;
+    queue[rear] = value;
+    size++;
+}
+
+
+int dequeue() {
+    if (isEmpty()) {
+        printf("Queue underflow\n");
+        return -1; 
+    }
+    int item = queue[front];
+    front = (front + 1) % maxSize;
+    size--;
+    return item;
+}
+
+void reverseFirstK(int k) {
+    if (k > size) {
+        printf("k is greater than the number of elements in the queue.\n");
+        return;
+    }
+
+    int stack[MAX_QUEUE_SIZE];
+    int top = -1;
+
+
+    for (int i = 0; i < k; i++) {
+        stack[++top] = dequeue();
+    }
+
+    
+    while (top >= 0) {
+        enqueue(stack[top--]);
+    }
+
+    for (int i = 0; i < size - k; i++) {
+        enqueue(dequeue());
+    }
+}
+
+void printQueue() {
+    if (isEmpty()) {
+        printf("Queue is empty\n");
+        return;
+    }
+    int i = front;
+    for (int j = 0; j < size; j++) {
+        printf("%d ", queue[i]);
+        i = (i + 1) % maxSize;
+    }
+    printf("\n");
+}
+
+int main() {
+   
+    printf("Enter the maximum size of the queue (up to %d): ", MAX_QUEUE_SIZE);
+    scanf("%d", &maxSize);
+
+    if (maxSize <= 0 || maxSize > MAX_QUEUE_SIZE) {
+        printf("Invalid maximum size. It should be between 1 and %d.\n", MAX_QUEUE_SIZE);
+        return 1;
+    }
+
+    int k;
+
+    printf("Enter exactly %d elements:\n", maxSize);
+    for (int i = 0; i < maxSize; i++) {
+        int value;
+        scanf("%d", &value);
+        enqueue(value);
+    }
+
+    printf("Original Queue:\n");
+    printQueue();
+
+    printf("Enter the number of elements to reverse: ");
+    scanf("%d", &k);
+
+    if (k > size) {
+        printf("Number of elements to reverse is greater than the number of elements in the queue.\n");
+        return 1;
+    }
+
+    reverseFirstK(k);
+
+    printf("Queue after reversing the first %d elements:\n", k);
+    printQueue();
+
+    return 0;
+}
+
+
+stack using queue
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 100
+
+
+int queue1[MAX], front1 = -1, rear1 = -1;
+int queue2[MAX], front2 = -1, rear2 = -1;
+int size, currentSize = 0;  
+int isQueueEmpty(int front) {
+    return front == -1;
+}
+
+int isQueueFull() {
+    return currentSize == size;  
+}
+
+void enqueue(int queue[], int *front, int *rear, int value) {
+    if (*rear == size - 1) {
+        printf("Queue is full!\n");
+        return;
+    }
+    if (*front == -1) {
+        *front = 0;
+    }
+    queue[++(*rear)] = value;
+}
+
+int dequeue(int queue[], int *front, int *rear) {
+    if (isQueueEmpty(*front)) {
+        printf("Queue is empty!\n");
+        return -1;
+    }
+    int value = queue[*front];
+    if (*front == *rear) {
+        *front = *rear = -1; 
+    } else {
+        (*front)++;
+    }
+    return value;
+}
+
+
+void copyQueue(int dest[], int *frontDest, int *rearDest, int src[], int *frontSrc, int *rearSrc) {
+    for (int i = *frontSrc; i <= *rearSrc; i++) {
+        enqueue(dest, frontDest, rearDest, src[i]);
+    }
+}
+
+
+void push(int value) {
+    if (isQueueFull()) {  
+        printf("Stack is full! Cannot push %d onto the stack.\n", value);
+        return;
+    }
+    
+    enqueue(queue2, &front2, &rear2, value);
+    currentSize++;  
+
+   
+    while (!isQueueEmpty(front1)) {
+        enqueue(queue2, &front2, &rear2, dequeue(queue1, &front1, &rear1));
+    }
+    
+    
+    copyQueue(queue1, &front1, &rear1, queue2, &front2, &rear2);
+    front2 = rear2 = -1; 
+}
+
+int pop() {
+    if (isQueueEmpty(front1)) {
+        printf("Stack is empty, cannot pop.\n");
+        return -1;
+    }
+    currentSize--;  
+    return dequeue(queue1, &front1, &rear1);
+}
+
+int top() {
+    if (isQueueEmpty(front1)) {
+        printf("Stack is empty, no top element.\n");
+        return -1;
+    }
+    return queue1[front1];
+}
+
+int isStackEmpty() {
+    return isQueueEmpty(front1);
+}
+
+
+int main() {
+    int choice, value;
+
+    
+    printf("Enter the size of the stack: ");
+    scanf("%d", &size);
+
+  
+    if (size <= 0 || size > MAX) {
+        printf("Invalid size. Please enter a size between 1 and %d.\n", MAX);
+        return -1;
+    }
+
+    while (1) {
+        printf("\n1. Push\n2. Pop\n3. Top\n4. Is Stack Empty?\n5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to push: ");
+                scanf("%d", &value);
+                push(value);
+                break;
+            case 2:
+                value = pop();
+                if (value != -1) {
+                    printf("Popped: %d\n", value);
+                }
+                break;
+            case 3:
+                value = top();
+                if (value != -1) {
+                    printf("Top element: %d\n", value);
+                }
+                break;
+            case 4:
+                if (isStackEmpty()) {
+                    printf("Stack is empty.\n");
+                } else {
+                    printf("Stack is not empty.\n");
+                }
+                break;
+            case 5:
+                exit(0);
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+
+    return 0;
+}
+
+
